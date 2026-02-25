@@ -1,0 +1,24 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/catalog-info.json
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: cursor-plugins
+  description: Official Elastic plugins for Cursor — MCP server integrations for AI-assisted development
+  annotations:
+    backstage.io/source-location: url:https://github.com/elastic/cursor-plugins/
+    github.com/project-slug: elastic/cursor-plugins
+  tags:
+    - cursor
+    - mcp
+    - ai
+    - developer-tools
+  links:
+    - url: https://github.com/elastic/cursor-plugins
+      title: GitHub Repository
+    - url: https://docs-v3-preview.elastic.dev/elastic/docs-builder/tree/main/mcp
+      title: Elastic Docs MCP Server
+spec:
+  type: library
+  owner: group:productivity-foundations
+  lifecycle: production

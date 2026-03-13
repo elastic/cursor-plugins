@@ -1,7 +1,7 @@
 {
   "name": "Elastic documentation MCP server",
   "version": "0.1.0",
-  "description": "Access the Elastic documentation in Cursor with the MCP server. ",
+  "description": "Access the official Elastic documentation in Cursor. ",
   "author": {
     "name": "Elastic"
   },

@@ -2,6 +2,12 @@
 
 [Cursor](https://cursor.com) plugins from Elastic.
 
+> [!NOTE]
+> **Technical Preview**
+>
+> These skills and tooing are in early release and under active development. Expect changes as skills are codified with robust
+> evaluations and as the model landscape evolves. Check back frequently for updates.
+
 ## Plugins
 
 ### elastic-docs

@@ -4,13 +4,13 @@
     "name": "Elastic"
   },
   "metadata": {
-    "description": "Official Elastic plugins for Cursor"
+    "description": "Elastic plugins for Cursor"
   },
   "plugins": [
     {
       "name": "elastic-docs",
       "source": "elastic-docs",
-      "description": "Elastic Documentation MCP server — search, browse, and analyze Elastic docs directly from Cursor"
+      "description": "Real-time semantic access to all official Elastic documentation and technical guides"
     }
   ]
 }

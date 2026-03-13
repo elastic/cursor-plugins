@@ -1,7 +1,7 @@
 {
   "name": "elastic-docs",
   "version": "0.1.0",
-  "description": "Access the official Elastic documentation in Cursor. ",
+  "description": "Real-time semantic access to all official Elastic documentation and technical guides",
   "author": {
     "name": "Elastic"
   },

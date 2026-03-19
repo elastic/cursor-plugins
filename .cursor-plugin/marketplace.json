@@ -11,6 +11,31 @@
       "name": "elastic-docs",
       "source": "elastic-docs",
       "description": "Real-time semantic access to all official Elastic documentation and technical guides"
+    },
+    {
+      "name": "elastic-skills-cloud",
+      "source": "skills/cloud",
+      "description": "Skills for Elastic Cloud — hosted cluster operations, deployment, and platform patterns"
+    },
+    {
+      "name": "elastic-skills-elasticsearch",
+      "source": "skills/elasticsearch",
+      "description": "Skills for Elasticsearch — search, indexing, ES|QL, security, authentication, and ingestion"
+    },
+    {
+      "name": "elastic-skills-kibana",
+      "source": "skills/kibana",
+      "description": "Skills for Kibana — alerts, connectors, dashboards, and administration"
+    },
+    {
+      "name": "elastic-skills-observability",
+      "source": "skills/observability",
+      "description": "Skills for Elastic Observability — APM, logs, metrics, and Synthetics"
+    },
+    {
+      "name": "elastic-skills-security",
+      "source": "skills/security",
+      "description": "Skills for Elastic Security — SIEM, detection, and security operations"
     }
   ]
 }

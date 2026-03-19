@@ -1,0 +1,11 @@
+{
+  "name": "elastic-skills-elasticsearch",
+  "version": "0.1.0",
+  "description": "Skills for Elasticsearch — search, indexing, ES|QL, security, authentication, and ingestion",
+  "author": {
+    "name": "Elastic"
+  },
+  "homepage": "https://github.com/elastic/agent-skills",
+  "repository": "https://github.com/elastic/agent-skills",
+  "keywords": ["elastic", "elasticsearch", "esql", "search", "ingest", "security"]
+}

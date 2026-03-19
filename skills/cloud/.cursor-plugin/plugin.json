@@ -1,0 +1,11 @@
+{
+  "name": "elastic-skills-cloud",
+  "version": "0.1.0",
+  "description": "Skills for Elastic Cloud — hosted cluster operations, deployment, and platform patterns",
+  "author": {
+    "name": "Elastic"
+  },
+  "homepage": "https://github.com/elastic/agent-skills",
+  "repository": "https://github.com/elastic/agent-skills",
+  "keywords": ["elastic", "elastic-cloud", "cloud", "elasticsearch", "kibana"]
+}

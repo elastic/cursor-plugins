@@ -13,29 +13,29 @@
       "description": "Real-time semantic access to all official Elastic documentation and technical guides"
     },
     {
-      "name": "elastic-skills-cloud",
+      "name": "elastic-cloud",
       "source": "skills/cloud",
-      "description": "Skills for Elastic Cloud — hosted cluster operations, deployment, and platform patterns"
+      "description": "Elastic Cloud skills — project setup, access management, network security, and Serverless project lifecycle"
     },
     {
-      "name": "elastic-skills-elasticsearch",
+      "name": "elastic-elasticsearch",
       "source": "skills/elasticsearch",
-      "description": "Skills for Elasticsearch — search, indexing, ES|QL, security, authentication, and ingestion"
+      "description": "Elasticsearch skills — ES|QL queries, data ingestion, security (authn, authz, audit), and troubleshooting"
     },
     {
-      "name": "elastic-skills-kibana",
+      "name": "elastic-kibana",
       "source": "skills/kibana",
-      "description": "Skills for Kibana — alerts, connectors, dashboards, and administration"
+      "description": "Kibana skills — dashboards, alerting rules, connectors, Vega visualizations, Agent Builder, streams, and audit logging"
     },
     {
-      "name": "elastic-skills-observability",
+      "name": "elastic-observability",
       "source": "skills/observability",
-      "description": "Skills for Elastic Observability — APM, logs, metrics, and Synthetics"
+      "description": "Elastic Observability skills — OpenTelemetry instrumentation and migration (.NET, Java, Python), LLM observability, log search, SLOs, and service health"
     },
     {
-      "name": "elastic-skills-security",
+      "name": "elastic-security",
       "source": "skills/security",
-      "description": "Skills for Elastic Security — SIEM, detection, and security operations"
+      "description": "Elastic Security skills — alert triage, case management, detection rule management, and sample data generation"
     }
   ]
 }

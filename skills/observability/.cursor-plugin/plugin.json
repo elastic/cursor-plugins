@@ -1,11 +1,11 @@
 {
-  "name": "elastic-skills-observability",
-  "version": "0.1.0",
-  "description": "Skills for Elastic Observability — APM, logs, metrics, and Synthetics",
+  "name": "elastic-observability",
+  "version": "0.1.1",
+  "description": "Elastic Observability skills — OpenTelemetry instrumentation and migration (.NET, Java, Python), LLM observability, log search, SLOs, and service health",
   "author": {
     "name": "Elastic"
   },
   "homepage": "https://github.com/elastic/agent-skills",
   "repository": "https://github.com/elastic/agent-skills",
-  "keywords": ["elastic", "observability", "apm", "logs", "metrics", "synthetics"]
+  "keywords": ["observability", "opentelemetry", "apm", "logs", "slo", "elastic"]
 }

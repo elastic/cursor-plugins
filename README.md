@@ -28,8 +28,8 @@ Separate Cursor plugins for each top-level namespace in [elastic/agent-skills](h
 
 | Plugin | Namespace | Description |
 | --- | --- | --- |
-| **elastic-skills-cloud** | `cloud` | Skills for Elastic Cloud — hosted cluster operations, deployment, and platform patterns |
-| **elastic-skills-elasticsearch** | `elasticsearch` | Skills for Elasticsearch — search, indexing, ES\|QL, security, authentication, and ingestion |
-| **elastic-skills-kibana** | `kibana` | Skills for Kibana — alerts, connectors, dashboards, and administration |
-| **elastic-skills-observability** | `observability` | Skills for Elastic Observability — APM, logs, metrics, and Synthetics |
-| **elastic-skills-security** | `security` | Skills for Elastic Security — SIEM, detection, and security operations |
+| **elastic-cloud** | `cloud` | Elastic Cloud skills — project setup, access management, network security, and Serverless project lifecycle |
+| **elastic-elasticsearch** | `elasticsearch` | Elasticsearch skills — ES\|QL queries, data ingestion, security (authn, authz, audit), and troubleshooting |
+| **elastic-kibana** | `kibana` | Kibana skills — dashboards, alerting rules, connectors, Vega visualizations, Agent Builder, streams, and audit logging |
+| **elastic-observability** | `observability` | Elastic Observability skills — OpenTelemetry instrumentation and migration (.NET, Java, Python), LLM observability, log search, SLOs, and service health |
+| **elastic-security** | `security` | Elastic Security skills — alert triage, case management, detection rule management, and sample data generation |

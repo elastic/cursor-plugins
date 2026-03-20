@@ -24,7 +24,7 @@ Connects Cursor to the [Elastic Documentation MCP server](https://elastic.github
 
 ### Namespace skills plugins
 
-Separate Cursor plugins for each top-level namespace in [elastic/agent-skills](https://github.com/elastic/agent-skills).
+Separate Cursor plugins for each top-level namespace in [elastic/cursor-plugins](https://github.com/elastic/cursor-plugins).
 
 | Plugin | Namespace | Description |
 | --- | --- | --- |

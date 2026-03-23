@@ -7,5 +7,6 @@
   },
   "homepage": "https://github.com/elastic/cursor-plugins",
   "repository": "https://github.com/elastic/cursor-plugins",
-  "keywords": ["security", "siem", "detection", "alerts", "cases", "elastic"]
+  "keywords": ["security", "siem", "detection", "alerts", "cases", "elastic"],
+  "skills": "./"
 }

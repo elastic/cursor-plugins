@@ -7,5 +7,6 @@
   },
   "homepage": "https://github.com/elastic/cursor-plugins",
   "repository": "https://github.com/elastic/cursor-plugins",
-  "keywords": ["kibana", "dashboards", "alerting", "connectors", "vega", "elastic"]
+  "keywords": ["kibana", "dashboards", "alerting", "connectors", "vega", "elastic"],
+  "skills": "./"
 }

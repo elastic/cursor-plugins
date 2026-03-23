@@ -1,0 +1,11 @@
+{
+  "name": "elastic-cloud",
+  "version": "0.1.1",
+  "description": "Elastic Cloud skills — project setup, access management, network security, and Serverless project lifecycle",
+  "author": {
+    "name": "Elastic"
+  },
+  "homepage": "https://github.com/elastic/cursor-plugins",
+  "repository": "https://github.com/elastic/cursor-plugins",
+  "keywords": ["cloud", "serverless", "elastic-cloud", "elastic"]
+}

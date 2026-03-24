@@ -1,12 +1,19 @@
 {
   "name": "elastic-observability",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Elastic Observability skills — OpenTelemetry instrumentation and migration (.NET, Java, Python), LLM observability, log search, SLOs, and service health",
   "author": {
     "name": "Elastic"
   },
   "homepage": "https://github.com/elastic/cursor-plugins",
   "repository": "https://github.com/elastic/cursor-plugins",
-  "keywords": ["observability", "opentelemetry", "apm", "logs", "slo", "elastic"],
+  "keywords": [
+    "observability",
+    "opentelemetry",
+    "apm",
+    "logs",
+    "slo",
+    "elastic"
+  ],
   "skills": "./"
 }

@@ -1,12 +1,19 @@
 {
   "name": "elastic-kibana",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Kibana skills — dashboards, alerting rules, connectors, Vega visualizations, Agent Builder, streams, and audit logging",
   "author": {
     "name": "Elastic"
   },
   "homepage": "https://github.com/elastic/cursor-plugins",
   "repository": "https://github.com/elastic/cursor-plugins",
-  "keywords": ["kibana", "dashboards", "alerting", "connectors", "vega", "elastic"],
+  "keywords": [
+    "kibana",
+    "dashboards",
+    "alerting",
+    "connectors",
+    "vega",
+    "elastic"
+  ],
   "skills": "./"
 }

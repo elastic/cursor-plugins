@@ -1,0 +1,23 @@
+{
+  "name": "elastic",
+  "version": "0.2.0",
+  "description": "Elastic skills and documentation — Elasticsearch, Kibana, Observability, Security, Cloud, ES|QL, OpenTelemetry, and MCP docs access",
+  "author": {
+    "name": "Elastic"
+  },
+  "homepage": "https://github.com/elastic/cursor-plugins",
+  "repository": "https://github.com/elastic/cursor-plugins",
+  "keywords": [
+    "elastic", "elasticsearch", "kibana", "observability", "security",
+    "cloud", "serverless", "esql", "search", "ingest", "dashboards",
+    "alerting", "connectors", "vega", "opentelemetry", "apm", "logs",
+    "slo", "siem", "detection", "alerts", "cases", "documentation", "mcp", "docs"
+  ],
+  "skills": [
+    "skills/cloud",
+    "skills/elasticsearch",
+    "skills/kibana",
+    "skills/observability",
+    "skills/security"
+  ]
+}

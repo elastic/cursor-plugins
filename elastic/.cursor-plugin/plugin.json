@@ -1,6 +1,6 @@
 {
   "name": "elastic",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Elastic skills and documentation — Elasticsearch, Kibana, Observability, Security, Cloud, ES|QL, OpenTelemetry, and MCP docs access",
   "author": {
     "name": "Elastic"

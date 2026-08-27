@@ -31,7 +31,7 @@ Create a mapping with `text` fields (for full-text search), `keyword` sub-fields
 
 ### Example: products index
 
-```json
+```http
 PUT /products
 {
   "mappings": {
@@ -76,28 +76,43 @@ PUT /products
 - **keyword** — `category`, `brand` use for filters and faceting.
 - **completion** — `title_suggest` powers autocomplete.
 
-**Synonyms (optional):** Add a custom analyzer with synonyms if needed:
+**Synonyms (optional):** Use the Elasticsearch Synonyms API so synonyms can be updated without reindexing:
+
+```http
+PUT _synonyms/my-synonyms
+{
+  "synonyms_set": [
+    { "id": "wireless", "synonyms": "wireless, bluetooth" }
+  ]
+}
+```
+
+Then reference the synonym set in a custom analyzer and apply it as a `search_analyzer` (not the index analyzer) so
+synonym updates take effect without reindexing:
 
 ```json
 {
   "settings": {
     "analysis": {
       "analyzer": {
-        "synonym_analyzer": {
+        "synonym_search_analyzer": {
           "tokenizer": "standard",
           "filter": ["lowercase", "synonym_filter"]
         }
       },
       "filter": {
         "synonym_filter": {
-          "type": "synonym",
-          "synonyms": ["wireless, bluetooth => wireless"]
+          "type": "synonym_graph",
+          "synonyms_set": "my-synonyms",
+          "updateable": true
         }
       }
     }
   }
 }
 ```
+
+Apply to fields with `"search_analyzer": "synonym_search_analyzer"` (keep the default `standard` analyzer for indexing).
 
 ## 3. Ingestion
 
@@ -137,7 +152,7 @@ def index_products(documents: list[dict]) -> tuple[int, list]:
 
 ### Basic Match Query
 
-```json
+```http
 GET /products/_search
 {
   "query": {
@@ -150,7 +165,7 @@ GET /products/_search
 
 ### Multi-Match Across Fields
 
-```json
+```http
 GET /products/_search
 {
   "query": {
@@ -166,7 +181,7 @@ GET /products/_search
 
 ### Bool Query with Filters
 
-```json
+```http
 GET /products/_search
 {
   "query": {
@@ -185,7 +200,7 @@ GET /products/_search
 
 ### Fuzzy Matching (Typo Tolerance)
 
-```json
+```http
 GET /products/_search
 {
   "query": {
@@ -201,7 +216,7 @@ GET /products/_search
 
 ### Autocomplete with Completion Suggester
 
-```json
+```http
 GET /products/_search
 {
   "suggest": {
@@ -219,7 +234,7 @@ GET /products/_search
 
 ### Highlighting
 
-```json
+```http
 GET /products/_search
 {
   "query": { "match": { "title": "wireless headphones" } },
@@ -234,7 +249,7 @@ GET /products/_search
 
 ### Pagination
 
-```json
+```http
 GET /products/_search
 {
   "query": { "match_all": {} },
@@ -346,3 +361,7 @@ Suggest hybrid or semantic search when:
 
 Direct the developer to the vector-hybrid-search guide for vector search, hybrid search (combining keyword + vector with
 RRF), or using Elasticsearch as a vector store.
+
+- **Search UI frontend** — Need to build the search page? Use the search-ui guide to add a React-based frontend with a
+  search bar, facets, autocomplete, and pagination on top of this index. Connects directly to the Elasticsearch index
+  via the Elasticsearch connector.

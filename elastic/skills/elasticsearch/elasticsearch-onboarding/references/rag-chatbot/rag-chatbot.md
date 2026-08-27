@@ -23,6 +23,22 @@ Apply this guide when the developer signals:
 Do **not** use this guide when: the developer only needs search results (not generated answers) — point them to keyword,
 semantic, or hybrid search instead.
 
+**Language adaptation:** Code examples below are in Python. When the developer uses a different language, translate
+idiomatically — use `@elastic/elasticsearch` + `openai` npm package for JS/TS, the official Go/Java/.NET client for
+those languages. For PDF extraction: `pdf-parse` (JS), Apache Tika (Java), `pdfplumber` (Python). For chunking:
+LangChain has JS, Python, and Java SDKs.
+
+**Verify models before recommending:** Check the latest Elastic docs before recommending embedding models, inference
+endpoints, or LLMs. Elastic offers managed models via EIS (Elastic Inference Service) — the developer may not need an
+external OpenAI/Anthropic API key. Jina v3 is the current default embedding model for `semantic_text` on EIS; Jina
+v5-small is available for high-throughput / cost-sensitive workloads. ELSER remains available for English-only sparse
+retrieval but must be explicitly specified. EIS also provides managed rerankers (Jina Reranker v2/v3). Check the
+[EIS documentation](https://www.elastic.co/docs/explore-analyze/elastic-inference/eis) for current model IDs. For new
+projects, prefer `semantic_text` with EIS-managed embeddings as the default because it handles embedding automatically
+without manual inference pipelines. However, the concrete examples in this guide use the more explicit `dense_vector` +
+ingest `inference` + external LLM client path so the workflow is transparent and works even when the developer is not
+using EIS.
+
 ## 2. Architecture
 
 RAG has four stages:
@@ -101,7 +117,7 @@ chunks = splitter.split_documents(documents)
 
 Store chunk text, embedding, and metadata for retrieval and source citation.
 
-```json
+```http
 PUT /knowledge-base
 {
   "mappings": {
@@ -109,7 +125,7 @@ PUT /knowledge-base
       "content": { "type": "text" },
       "embedding": {
         "type": "dense_vector",
-        "dims": 768,
+        "dims": 1024,
         "index": true,
         "similarity": "cosine"
       },
@@ -124,17 +140,21 @@ PUT /knowledge-base
 }
 ```
 
+> **`dims` must match your embedding model's output dimension.** The example uses 1024 (Jina v3 default on EIS). If the
+> developer selects a different model, adjust `dims` accordingly — a mismatch causes indexing failures. With
+> `semantic_text` this coupling is handled automatically.
+
 ## 5. Ingestion Pipeline
 
 Use an ingest pipeline to embed chunks at index time.
 
-```json
+```http
 PUT _ingest/pipeline/embed-knowledge-base
 {
   "processors": [
     {
       "inference": {
-        "model_id": "e5-multilingual",
+        "model_id": "<YOUR_EMBEDDING_MODEL>",
         "input_output": [
           {
             "input_field": "content",
@@ -146,6 +166,11 @@ PUT _ingest/pipeline/embed-knowledge-base
   ]
 }
 ```
+
+> **Replace `<YOUR_EMBEDDING_MODEL>`** with your inference endpoint ID. The default EIS embedding model is Jina v3 (1024
+> dims); Jina v5-small is available for cost-sensitive workloads. Check
+> [EIS models](https://www.elastic.co/docs/explore-analyze/elastic-inference/eis) for current model IDs — no API key or
+> ML nodes needed.
 
 **Bulk index chunks:**
 
@@ -166,14 +191,14 @@ def index_chunks(chunks: list[dict]) -> tuple[int, list]:
 
 ### Semantic Retrieval (Default for RAG)
 
-```json
+```http
 GET /knowledge-base/_search
 {
   "knn": {
     "field": "embedding",
     "query_vector_builder": {
       "text_embedding": {
-        "model_id": "e5-multilingual",
+        "model_id": "<YOUR_EMBEDDING_MODEL>",
         "model_text": "How do I configure index mappings?"
       }
     },
@@ -188,7 +213,7 @@ GET /knowledge-base/_search
 
 Combine keyword and semantic for more robust retrieval:
 
-```json
+```http
 POST /knowledge-base/_search
 {
   "size": 5,
@@ -201,7 +226,7 @@ POST /knowledge-base/_search
             "field": "embedding",
             "query_vector_builder": {
               "text_embedding": {
-                "model_id": "e5-multilingual",
+                "model_id": "<YOUR_EMBEDDING_MODEL>",
                 "model_text": "How do I configure index mappings?"
               }
             },
@@ -219,14 +244,14 @@ POST /knowledge-base/_search
 
 ### Filtered Retrieval (Scope to Specific Sources)
 
-```json
+```http
 GET /knowledge-base/_search
 {
   "knn": {
     "field": "embedding",
     "query_vector_builder": {
       "text_embedding": {
-        "model_id": "e5-multilingual",
+        "model_id": "<YOUR_EMBEDDING_MODEL>",
         "model_text": "How do I configure mappings?"
       }
     },
@@ -244,11 +269,11 @@ GET /knowledge-base/_search
 Pass retrieved chunks to an LLM with a grounded prompt.
 
 ```python
-from openai import OpenAI
+from openai import OpenAI  # or the SDK for the developer's chosen LLM
 from elasticsearch import Elasticsearch
 
 es = Elasticsearch(cloud_id="...", api_key="...")
-llm = OpenAI()
+llm = OpenAI()  # replace with the developer's LLM provider
 
 def ask(question: str, k: int = 5) -> dict:
     # 1. Retrieve relevant chunks
@@ -258,7 +283,7 @@ def ask(question: str, k: int = 5) -> dict:
             "field": "embedding",
             "query_vector_builder": {
                 "text_embedding": {
-                    "model_id": "e5-multilingual",
+                    "model_id": "<YOUR_EMBEDDING_MODEL>",
                     "model_text": question
                 }
             },
@@ -279,9 +304,9 @@ def ask(question: str, k: int = 5) -> dict:
 
     context = "\n\n".join(context_parts)
 
-    # 3. Generate answer
+    # 3. Generate answer — replace model with the developer's choice from Step 2
     completion = llm.chat.completions.create(
-        model="gpt-4o-mini",
+        model="<LLM_MODEL>",
         messages=[
             {"role": "system", "content": (
                 "Answer the user's question using ONLY the provided context. "
@@ -308,7 +333,7 @@ def ask_with_history(question: str, history: list[dict], k: int = 5) -> dict:
     # Reformulate question using chat history for better retrieval
     if history:
         reformulation = llm.chat.completions.create(
-            model="gpt-4o-mini",
+            model="<LLM_MODEL>",
             messages=[
                 {"role": "system", "content": (
                     "Rewrite the user's question as a standalone search query, "
@@ -338,7 +363,7 @@ def ask_with_history(question: str, history: list[dict], k: int = 5) -> dict:
     ]
 
     completion = llm.chat.completions.create(
-        model="gpt-4o-mini",
+        model="<LLM_MODEL>",
         messages=messages,
         temperature=0.2
     )
@@ -371,13 +396,13 @@ def chat():
 
 ## 10. Relevance Tuning for RAG
 
-| Lever                  | Effect                                                                                       |
-| ---------------------- | -------------------------------------------------------------------------------------------- |
-| **Chunk size**         | Smaller = more precise retrieval, less context per chunk. Larger = more context but noisier. |
-| **k (num results)**    | More chunks = more context for the LLM but risks dilution. Start with 3-5.                   |
-| **Hybrid retrieval**   | Adds keyword matching; helps when questions contain specific terms or identifiers.           |
-| **Reranking**          | Retrieve 20, rerank to top 5 with a cross-encoder for best precision.                        |
-| **Metadata filtering** | Scope retrieval to relevant sources, time ranges, or categories.                             |
+| Lever                  | Effect                                                                                          |
+| ---------------------- | ----------------------------------------------------------------------------------------------- |
+| **Chunk size**         | Smaller = more precise retrieval, less context per chunk. Larger = more context but noisier.    |
+| **k (num results)**    | More chunks = more context for the LLM but risks dilution. Start with 3-5.                      |
+| **Hybrid retrieval**   | Adds keyword matching; helps when questions contain specific terms or identifiers.              |
+| **Reranking**          | Retrieve 20, rerank to top 5 with a managed reranker (Jina Reranker on EIS) for best precision. |
+| **Metadata filtering** | Scope retrieval to relevant sources, time ranges, or categories.                                |
 
 ## 11. Common Follow-Ups
 
@@ -388,7 +413,7 @@ def chat():
 | "How do I cite sources?"              | Include source metadata in retrieval, reference in prompt with numbered citations.                               |
 | "How do I handle long documents?"     | Chunk with overlap; consider hierarchical retrieval (retrieve chunk, then fetch parent section).                 |
 | "How do I update the knowledge base?" | Re-chunk and re-index changed documents. Use `parent_doc_id` to delete old chunks before re-indexing.            |
-| "Which LLM should I use?"             | GPT-4o-mini for cost efficiency, GPT-4o or Claude for quality. Any OpenAI-compatible API works.                  |
+| "Which LLM should I use?"             | Use the LLM the developer chose in Step 2. EIS provides managed LLMs; OpenAI, Anthropic, or similar also work.   |
 
 ## 12. When to Upgrade
 

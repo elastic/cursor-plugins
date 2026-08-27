@@ -30,7 +30,24 @@ guide.
 E-commerce indices need text fields for search, keyword fields for filtering/faceting, numeric fields for sorting/range
 filters, and nested fields for variants.
 
-```json
+First, create a synonym set via the Synonyms API. Synonyms are applied at **search time** (via `search_analyzer`) so the
+set can be updated without reindexing:
+
+```http
+PUT _synonyms/product-synonyms
+{
+  "synonyms_set": [
+    { "id": "laptop", "synonyms": "laptop, notebook" },
+    { "id": "phone", "synonyms": "phone, mobile, cell phone" },
+    { "id": "tv", "synonyms": "tv, television" },
+    { "id": "headphones", "synonyms": "headphones, earphones, earbuds" }
+  ]
+}
+```
+
+Then create the index referencing that synonym set:
+
+```http
 PUT /products
 {
   "settings": {
@@ -41,7 +58,7 @@ PUT /products
           "tokenizer": "standard",
           "filter": ["lowercase", "autocomplete_filter"]
         },
-        "synonym_analyzer": {
+        "synonym_search_analyzer": {
           "type": "custom",
           "tokenizer": "standard",
           "filter": ["lowercase", "product_synonyms"]
@@ -54,13 +71,9 @@ PUT /products
           "max_gram": 15
         },
         "product_synonyms": {
-          "type": "synonym",
-          "synonyms": [
-            "laptop, notebook => laptop",
-            "phone, mobile, cell phone => phone",
-            "tv, television => tv",
-            "headphones, earphones, earbuds => headphones"
-          ]
+          "type": "synonym_graph",
+          "synonyms_set": "product-synonyms",
+          "updateable": true
         }
       }
     }
@@ -69,13 +82,13 @@ PUT /products
     "properties": {
       "title": {
         "type": "text",
-        "analyzer": "synonym_analyzer",
+        "search_analyzer": "synonym_search_analyzer",
         "fields": {
           "keyword": { "type": "keyword" },
           "autocomplete": { "type": "text", "analyzer": "autocomplete_analyzer", "search_analyzer": "standard" }
         }
       },
-      "description": { "type": "text", "analyzer": "synonym_analyzer" },
+      "description": { "type": "text", "search_analyzer": "synonym_search_analyzer" },
       "category": { "type": "keyword" },
       "subcategory": { "type": "keyword" },
       "brand": { "type": "keyword" },
@@ -132,7 +145,7 @@ documents.
 
 ### Product Search with Filters
 
-```json
+```http
 POST /products/_search
 {
   "query": {
@@ -166,7 +179,7 @@ POST /products/_search
 
 Return filter counts alongside search results:
 
-```json
+```http
 POST /products/_search
 {
   "query": {
@@ -206,7 +219,7 @@ POST /products/_search
 
 ### Autocomplete
 
-```json
+```http
 POST /products/_search
 {
   "suggest": {
@@ -225,7 +238,7 @@ POST /products/_search
 
 For search-as-you-type with results (not just suggestions):
 
-```json
+```http
 POST /products/_search
 {
   "query": {
@@ -243,7 +256,7 @@ POST /products/_search
 
 ### "Did You Mean" (Spelling Suggestions)
 
-```json
+```http
 POST /products/_search
 {
   "suggest": {
@@ -267,7 +280,7 @@ POST /products/_search
 
 Promote on-sale, highly-rated, or popular products:
 
-```json
+```http
 POST /products/_search
 {
   "query": {
@@ -318,7 +331,7 @@ POST /products/_search
 
 Filter by dynamic product attributes (size, color, material):
 
-```json
+```http
 POST /products/_search
 {
   "query": {
@@ -508,3 +521,6 @@ def autocomplete():
 - **Hybrid** — Combine keyword + semantic for the best of both. See the vector-hybrid-search guide.
 - **Personalization** — Boost results based on user behavior (clicks, purchases). Requires a signals index and custom
   scoring.
+- **Search UI frontend** — Need to build the actual search page? Use the search-ui guide to add a React-based frontend
+  with facets, autocomplete, sorting, and pagination on top of this index. Works with the Elasticsearch connector
+  directly — no custom API integration needed.

@@ -9,8 +9,8 @@ description:
 # Search UI Frontend Guide
 
 Guide developers through building a search frontend with Elastic's Search UI library (`@elastic/search-ui`). Use this
-guide **after** a backend recipe (keyword-search, hybrid-search, semantic-search, catalog-ecommerce) has produced a
-working index and API, and the developer asks "now how do I build the search page?"
+guide **after** a backend recipe (keyword-search, vector-hybrid-search, catalog-ecommerce) has produced a working index
+and API, and the developer asks "now how do I build the search page?"
 
 ## 1. When to Use This Guide
 
@@ -25,7 +25,7 @@ Apply this guide when the developer signals:
 Do **not** use this guide when:
 
 - The developer is building an AI pipeline where code (not humans) consumes search results — point them to
-  vector-database
+  vector-hybrid-search
 - They only need a backend API with no frontend — they're done after the backend recipe
 - They want to use a completely different frontend framework (Vue, Angular, Svelte) **without React** — Search UI's
   pre-built components are React-only, though the headless core works with any framework. Explain the tradeoff: with
@@ -468,12 +468,11 @@ recommend query strategies their version supports.**
 
 This guide is designed to plug into any backend recipe. Here's how the handoff works:
 
-| Backend Recipe        | What It Provides                                               | Search UI Connects Via                                                    |
-| --------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| **keyword-search**    | Text fields, keyword filters, completion field                 | Default query config — just map `search_fields` and `facets` to the index |
-| **catalog-ecommerce** | Product mapping with synonyms, nested attributes, autocomplete | Full config example in section 5 above                                    |
-| **hybrid-search**     | BM25 + semantic fields                                         | `getQueryFn` or `interceptSearchRequest` with RRF retriever (section 7)   |
-| **semantic-search**   | `semantic_text` or `dense_vector` fields                       | `getQueryFn` with `semantic` or `knn` query (section 7)                   |
+| Backend Pattern          | What It Provides                                               | Search UI Connects Via                                                  |
+| ------------------------ | -------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| **keyword-search**       | Text fields, keyword filters, completion field                 | Default query config — map `search_fields` and `facets` to the index    |
+| **catalog-ecommerce**    | Product mapping with synonyms, nested attributes, autocomplete | Full config example in section 5 above                                  |
+| **vector-hybrid-search** | BM25 + semantic fields, `semantic_text` or `dense_vector`      | `getQueryFn` or `interceptSearchRequest` with RRF retriever (section 7) |
 
 The backend recipe builds the index, mapping, ingestion, and API. This recipe builds the frontend on top. If the
 developer followed a backend recipe that produced a Flask/Express API, they have two choices:

@@ -18,10 +18,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Extract version and check for changes
+      - name: Extract version
         id: version
-        env:
-          BEFORE_SHA: ${{ github.event.before }}
         run: |
           version=$(jq -r '.version' elastic/.cursor-plugin/plugin.json)
           name=$(jq -r '.name' elastic/.cursor-plugin/plugin.json)
@@ -29,15 +27,7 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
-          prev_version=$(git show "${BEFORE_SHA}:elastic/.cursor-plugin/plugin.json" 2>/dev/null | jq -r '.version' 2>/dev/null || echo "")
-          if [ "$version" = "$prev_version" ]; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Check if tag already exists
-        if: steps.version.outputs.changed == 'true'
         id: tag-check
         env:
           TAG: ${{ steps.version.outputs.tag }}
@@ -49,7 +39,7 @@ jobs:
           fi
 
       - name: Create git tag
-        if: steps.version.outputs.changed == 'true' && steps.tag-check.outputs.exists == 'false'
+        if: steps.tag-check.outputs.exists == 'false'
         env:
           TAG: ${{ steps.version.outputs.tag }}
         run: |
@@ -58,8 +48,20 @@ jobs:
           git tag -a "$TAG" -m "Release $TAG"
           git push origin "$TAG"
 
+      - name: Check if release already exists
+        id: release-check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Create GitHub Release
-        if: steps.version.outputs.changed == 'true' && steps.tag-check.outputs.exists == 'false'
+        if: steps.release-check.outputs.exists == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ steps.version.outputs.tag }}

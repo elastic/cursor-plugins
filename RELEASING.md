@@ -8,10 +8,9 @@ When a commit lands on `main` that changes `elastic/.cursor-plugin/plugin.json`,
 the workflow:
 
 1. Reads the `name` and `version` from `plugin.json`.
-2. Compares the version against the previous commit — if unchanged, stops.
-3. Forms the tag `{name}--v{version}` (e.g. `elastic--v0.6.0`).
-4. If the tag doesn't already exist, creates it and publishes a GitHub Release
-   with auto-generated release notes.
+2. Forms the tag `{name}--v{version}` (e.g. `elastic--v0.6.0`).
+3. Creates the git tag if it doesn't already exist.
+4. Creates a GitHub Release if one doesn't already exist for that tag.
 
 ## When does it run?
 
@@ -19,8 +18,9 @@ The workflow triggers on any push to `main` that touches
 `elastic/.cursor-plugin/plugin.json`. In practice, this happens when an
 agent-skills sync PR bumps the version and merges.
 
-If the version in `plugin.json` hasn't changed (or the tag already exists),
-the workflow is a no-op.
+If the tag and release already exist for the current version, the workflow
+is a no-op. This makes re-runs safe — if the tag was created but the release
+step failed, re-running will skip tag creation and pick up at release creation.
 
 ## Versioning
 

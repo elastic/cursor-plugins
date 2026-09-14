@@ -22,10 +22,8 @@ jobs:
         id: version
         run: |
           version=$(jq -r '.version' elastic/.cursor-plugin/plugin.json)
-          name=$(jq -r '.name' elastic/.cursor-plugin/plugin.json)
-          tag="${name}--v${version}"
           echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "tag=$version" >> "$GITHUB_OUTPUT"
 
       - name: Check if tag already exists
         id: tag-check

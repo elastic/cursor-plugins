@@ -7,8 +7,8 @@ Releases are tagged automatically by the **Tag Release** GitHub Actions workflow
 When a commit lands on `main` that changes `elastic/.cursor-plugin/plugin.json`,
 the workflow:
 
-1. Reads the `name` and `version` from `plugin.json`.
-2. Forms the tag `{name}--v{version}` (e.g. `elastic--v0.6.0`).
+1. Reads the `version` from `plugin.json`.
+2. Uses the version as the tag (e.g. `0.6.0`).
 3. Creates the git tag if it doesn't already exist.
 4. Creates a GitHub Release if one doesn't already exist for that tag.
 

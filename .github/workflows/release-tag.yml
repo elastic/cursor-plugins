@@ -1,0 +1,59 @@
+name: Tag Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'elastic/.cursor-plugin/plugin.json'
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    name: Tag and Publish Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - name: Extract version
+        id: version
+        run: |
+          version=$(jq -r '.version' elastic/.cursor-plugin/plugin.json)
+          name=$(jq -r '.name' elastic/.cursor-plugin/plugin.json)
+          tag="${name}--v${version}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Check if tag already exists
+        id: tag-check
+        run: |
+          if git rev-parse "${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create git tag
+        if: steps.tag-check.outputs.exists == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          tag="${{ steps.version.outputs.tag }}"
+          git tag -a "$tag" -m "Release $tag"
+          git push origin "$tag"
+
+      - name: Create GitHub Release
+        if: steps.tag-check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${{ steps.version.outputs.tag }}"
+          version="${{ steps.version.outputs.version }}"
+
+          gh release create "$tag" \
+            --verify-tag \
+            --title "v${version}" \
+            --generate-notes

@@ -8,8 +8,9 @@ When a commit lands on `main` that changes `elastic/.cursor-plugin/plugin.json`,
 the workflow:
 
 1. Reads the `name` and `version` from `plugin.json`.
-2. Forms the tag `{name}--v{version}` (e.g. `elastic--v0.6.0`).
-3. If the tag doesn't already exist, creates it and publishes a GitHub Release
+2. Compares the version against the previous commit — if unchanged, stops.
+3. Forms the tag `{name}--v{version}` (e.g. `elastic--v0.6.0`).
+4. If the tag doesn't already exist, creates it and publishes a GitHub Release
    with auto-generated release notes.
 
 ## When does it run?
